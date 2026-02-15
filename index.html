@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Spatter Analysis System | PBL 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { background-color: #020617; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; line-height: 1.6; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .gradient-text { background: linear-gradient(90deg, #60a5fa, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        section p, section li { font-size: 0.95rem; line-height: 1.7; letter-spacing: 0.01em; }
+        section h2 { letter-spacing: -0.02em; }
+        .formula-block { font-family: 'Georgia', 'Times New Roman', serif; font-size: 1.25rem; line-height: 2; }
+        
+        /* TIMER UI - FIXED CONTRAST */
+        #timerContainer { background: #ffffff; color: #020617; box-shadow: 0 10px 40px rgba(0,0,0,0.8); border: 3px solid #3b82f6; z-index: 1000; }
+        @keyframes flicker { 0%, 100% { background-color: #ffffff; } 50% { background-color: #fca5a5; } }
+        .timer-warning { animation: flicker 1s infinite; border: 3px solid #ef4444 !important; color: #b91c1c !important; }
+        .timer-stop { background-color: #991b1b !important; color: #ffffff !important; border: 3px solid #f87171 !important; animation: none; }
+    </style>
+</head>
+<body onload="startTimer()">
+
+    <div id="timerContainer" class="fixed bottom-10 right-10 px-8 py-4 rounded-3xl flex items-center gap-4 transition-all">
+        <i class="fas fa-hourglass-start text-blue-600 text-2xl" id="timerIcon"></i>
+        <span id="displayTime" class="text-4xl font-black font-mono tracking-tighter">00:00</span>
+    </div>
+
+    <nav class="fixed w-full z-50 glass border-b border-slate-800/50 px-8 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <div class="bg-white p-1 rounded flex items-center justify-center shadow-md" style="height: 48px; width: 48px;">
+                <img src="mujlogo.jpg" alt="MUJ" class="h-full w-auto object-contain" onerror="this.src='https://via.placeholder.com/50?text=MUJ'">
+            </div>
+            <div class="flex flex-col text-left">
+                <span class="text-xl font-black text-white leading-none uppercase tracking-tighter">PBL <span class="text-blue-500 italic">2026</span></span>
+                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">Dept. of Computer Science & Engineering</span>
+            </div>
+        </div>
+        <div class="hidden md:flex gap-8 text-[11px] uppercase tracking-widest font-bold opacity-70">
+            <a href="#problem" class="hover:text-blue-400 transition">Problem</a>
+            <a href="#methodology" class="hover:text-blue-400 transition">Methodology</a>
+            <a href="#math" class="hover:text-blue-400 transition">Math Model</a>
+            <a href="#implementation" class="hover:text-blue-400 transition">Implementation</a>
+            <a href="#results" class="hover:text-blue-400 transition">Results</a>
+            <a href="#future" class="hover:text-blue-400 transition">Future</a>
+            <a href="#team" class="hover:text-blue-400 transition">Team</a>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 pt-48 pb-32 space-y-32">
+        
+        <section class="text-center">
+            <div class="inline-block px-4 py-1 border border-slate-800 rounded-full text-slate-500 text-[10px] font-mono mb-6 uppercase tracking-widest">ID: 2427030098</div>
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-8 uppercase leading-tight"><span class="gradient-text">Blood Spatter Analysis System – Measurement-Based Analytical Model</span></h1>
+            <p class="text-slate-400 max-w-2xl mx-auto text-base leading-relaxed border-l-2 border-blue-500/30 pl-6 text-left">
+                A measurement-based analytical model for bloodstain pattern analysis in forensic science. The system extracts geometric features from blood droplets using classical image processing and estimates angle of impact via deterministic ellipse fitting—no machine learning or deep learning. Designed for interpretable, forensically defensible results.
+            </p>
+        </section>
+
+        <section id="problem" class="space-y-12">
+            <h2 class="text-3xl font-extrabold text-center">Problem Statement</h2>
+            <div class="glass p-10 rounded-[2.5rem] border-l-4 border-blue-600">
+                <p class="text-slate-400 leading-relaxed text-justify">
+                    Blood spatter patterns contain valuable forensic information for crime-scene reconstruction. Manual interpretation is subjective, time-consuming, and error-prone. This project builds a computational analytical model that extracts geometric features from droplets and estimates angle of impact using ellipse fitting, providing reproducible and geometrically rigorous results from 2D images.
+                </p>
+            </div>
+            <div class="space-y-6">
+                <div class="glass p-8 rounded-3xl border-r-4 border-blue-500/50">
+                    <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest mb-3">Literature Review</h3>
+                    <ul class="text-sm text-slate-400 space-y-2 list-disc list-inside leading-relaxed">
+                        <li>Classical BPA (Bloodstain Pattern Analysis) relies on elliptical geometry and the arcsin(width/length) relationship for angle estimation.</li>
+                        <li>Existing tools range from manual protractor-based methods to software-assisted ellipse fitting; many lack automation or rigorous geometric foundations.</li>
+                        <li>Recent ML-based approaches offer automation but lack interpretability and forensic defensibility required in legal contexts.</li>
+                    </ul>
+                </div>
+                <div class="glass p-8 rounded-3xl border-r-4 border-purple-500/50">
+                    <h3 class="text-purple-400 font-bold text-xs uppercase tracking-widest mb-3">Research Gap / Innovation</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">A purely measurement-based, deterministic pipeline using OpenCV and classical computer vision. No ML or CNN—fully interpretable, forensically defensible, and suitable for peer-reviewed forensic standards where black-box models are inadmissible.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="methodology" class="space-y-12">
+            <h2 class="text-4xl font-black text-center uppercase tracking-tight">Proposed Solution / <span class="text-blue-500">Methodology</span></h2>
+            <p class="text-slate-400 text-center max-w-3xl mx-auto leading-relaxed">
+                The pipeline follows: image acquisition → preprocessing (grayscale conversion, thresholding, Gaussian blur for noise reduction) → Canny edge detection → contour detection → ellipse fitting using OpenCV minAreaRect → feature extraction (major axis, minor axis) → angle estimation via θ = arcsin(minor/major). Measurement-based modeling is chosen over ML for interpretability, forensic admissibility, and deterministic reproducibility.
+            </p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass p-8 rounded-3xl text-center">
+                    <i class="fas fa-image text-blue-500 text-3xl mb-4"></i>
+                    <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">Input</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">2D blood spatter photographs (JPG/PNG). Grayscale conversion, thresholding, and noise reduction applied before contour extraction.</p>
+                </div>
+                <div class="glass p-8 rounded-3xl text-center">
+                    <i class="fas fa-ruler-combined text-purple-500 text-3xl mb-4"></i>
+                    <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">Measurement-Based Pipeline</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">OpenCV: contour detection, ellipse fitting (minAreaRect), major/minor axis extraction, arcsin formula for angle estimation. No ML.</p>
+                </div>
+                <div class="glass p-8 rounded-3xl text-center border-2 border-green-500/20 bg-green-500/5">
+                    <i class="fab fa-python text-green-500 text-3xl mb-4"></i>
+                    <h3 class="font-bold mb-4 uppercase text-xs tracking-widest text-green-400">Live Execution</h3>
+                    <a href="src/main.py" target="_blank" class="px-6 py-2 bg-green-600 rounded-full text-[10px] font-black hover:bg-green-500 transition shadow-lg shadow-green-900/40">VIEW CODE / DEMO</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="math" class="glass p-12 rounded-[3rem] border-l-4 border-amber-500/60">
+            <h2 class="text-3xl font-black mb-8 uppercase tracking-tight">Mathematical <span class="text-amber-400">Model</span></h2>
+            <p class="text-slate-400 mb-6 leading-relaxed">
+                A blood droplet striking a surface at an angle produces an elliptical stain. The aspect ratio of minor to major axis relates directly to the impact angle. Assumptions: elliptical shape, minor_axis perpendicular to impact direction, major_axis parallel; valid for typical forensic impact angles.
+            </p>
+            <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-700/50 formula-block">
+                <p class="text-slate-300 mb-2">Angle of Impact Estimation:</p>
+                <p class="text-white font-semibold text-xl md:text-2xl">θ = arcsin(minor_axis / major_axis)</p>
+                <p class="text-slate-500 text-sm mt-4">minor_axis = smaller dimension (width) of fitted ellipse; major_axis = larger dimension (length); θ ∈ [0°, 90°]. Ratio is clamped to [0, 1] for numerical stability.</p>
+            </div>
+            <p class="text-slate-500 text-sm mt-4 italic">Derivation from fluid dynamics: the elliptical footprint’s eccentricity encodes impact angle. At 90° (perpendicular impact) the stain is circular (ratio = 1); at grazing angles the ellipse elongates (ratio → 0).</p>
+        </section>
+
+        <section id="implementation" class="space-y-10">
+            <h2 class="text-4xl font-black text-center uppercase tracking-tight">Implementation / <span class="text-blue-500">Progress</span></h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="glass p-8 rounded-3xl">
+                    <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest mb-4">Tools & Libraries</h3>
+                    <ul class="text-slate-400 space-y-2 text-sm leading-relaxed">
+                        <li><strong class="text-slate-300">Python</strong> — core language</li>
+                        <li><strong class="text-slate-300">OpenCV (cv2)</strong> — image I/O, grayscale, Gaussian blur, Canny edge detection, contour finding, minAreaRect</li>
+                        <li><strong class="text-slate-300">NumPy</strong> — array operations</li>
+                        <li><strong class="text-slate-300">math</strong> — arcsin, degrees conversion</li>
+                    </ul>
+                </div>
+                <div class="glass p-8 rounded-3xl">
+                    <h3 class="text-purple-400 font-bold text-xs uppercase tracking-widest mb-4">Current Status</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Classical computer vision pipeline implemented in Python with OpenCV. No machine learning; fully deterministic analytical model. Completed: image loading, grayscale/blur/edge preprocessing, contour detection, minAreaRect-based ellipse approximation, per-droplet area/width/length extraction, angle estimation, and visual overlay with bounding boxes on processed images.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="results" class="glass p-12 rounded-[3.5rem] border-t-4 border-blue-500">
+            <h2 class="text-3xl font-black mb-12 text-center uppercase tracking-tight">Results / <span class="text-blue-500">Observations</span></h2>
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="space-y-4">
+                    <p class="text-slate-400 text-sm leading-relaxed">Sample output: processed image with bounding boxes around detected droplets. Each droplet annotated with ellipse fit; angles displayed in console and overlays.</p>
+                    <div class="h-64 rounded-2xl bg-slate-900/60 border border-slate-700/50 flex items-center justify-center text-slate-500 text-xs uppercase tracking-widest">Output: images/ with detected droplets and angle overlay</div>
+                </div>
+                <div class="space-y-6">
+                    <div class="p-6 rounded-2xl bg-white/5 flex justify-between items-center border border-white/10 shadow-inner">
+                        <span class="text-slate-400 font-bold uppercase text-xs tracking-widest">Observations</span>
+                        <span class="text-blue-400 font-mono font-black text-xl">Per-droplet θ°</span>
+                    </div>
+                    <p class="text-slate-400 text-sm text-justify leading-relaxed">Successful droplet detection and ellipse approximation on test images. Angle estimation yields interpretable per-droplet results. System behavior: robust to moderate noise via Gaussian blur; accuracy depends on image quality, ellipse fit quality, and minAreaRect assumptions. Deterministic output enables reproducibility for forensic documentation.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="future" class="glass p-10 rounded-[2.5rem] border-r-4 border-purple-500/60">
+            <h2 class="text-3xl font-black mb-6 uppercase tracking-tight">Future <span class="text-purple-400">Scope</span></h2>
+            <ul class="text-slate-400 space-y-3 text-sm leading-relaxed list-disc list-inside">
+                <li>Dataset expansion with diverse blood spatter images for validation and benchmarking.</li>
+                <li>ML hybrid models combining measurement-based features with supervised learning for pattern classification.</li>
+                <li>3D trajectory reconstruction and area-of-origin estimation from multiple 2D views.</li>
+                <li>Automated forensic analysis tools with report generation and integration into standard investigative workflows.</li>
+            </ul>
+        </section>
+
+        <section id="team" class="text-center pt-10 border-t border-slate-900">
+            <h2 class="text-[10px] font-black text-slate-600 uppercase tracking-[0.5em] mb-12">Academic Credits</h2>
+            <div class="flex flex-wrap justify-center gap-10">
+                <div class="glass px-12 py-8 rounded-[2rem] border-b-4 border-blue-600">
+                    <p class="text-[9px] font-bold text-blue-500 mb-2 uppercase tracking-widest">Project Guide</p>
+                    <p class="font-black text-xl text-slate-100">Dr. Ankit Shrivastava</p>
+                </div>
+                <div class="glass px-12 py-8 rounded-[2rem] border-b-4 border-slate-700">
+                    <p class="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Team Member 1</p>
+                    <p class="font-black text-xl text-slate-100">Omisha Shukla</p>
+                    <p class="text-[10px] text-slate-500 mt-1">2427030098</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-12 text-center bg-black/40 border-t border-slate-900">
+        <p class="text-slate-600 text-[10px] font-bold tracking-[0.3em] uppercase mb-2">Manipal University Jaipur</p>
+        <p class="text-slate-500 text-[9px] font-medium tracking-[0.2em] uppercase opacity-50">Department of Computer Science & Engineering • 2026</p>
+    </footer>
+
+    <script>
+        // TIMER LOGIC
+        let sec = 0;
+        let timer = null;
+        function startTimer() {
+            timer = setInterval(() => {
+                sec++;
+                let m = Math.floor(sec / 60);
+                let s = sec % 60;
+                document.getElementById('displayTime').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                
+                if (sec >= 480 && sec < 600) { // 8-10 Mins Warning
+                    document.getElementById('timerContainer').classList.add('timer-warning');
+                    document.getElementById('timerIcon').classList.replace('fa-hourglass-start', 'fa-hourglass-half');
+                } else if (sec >= 600) { // 10 Mins Stop
+                    clearInterval(timer);
+                    document.getElementById('timerContainer').classList.replace('timer-warning', 'timer-stop');
+                    document.getElementById('displayTime').innerText = "10:00";
+                    document.getElementById('timerIcon').classList.replace('fa-hourglass-half', 'fa-hourglass-end');
+                }
+            }, 1000);
+        }
+
+        // Chart.js removed—Results section uses placeholder for actual output images / observations.
+    </script>
+</body>
+</html>
