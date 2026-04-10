@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>Forensic Blood Spatter Analysis • Lab Console</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <header class="topbar" role="banner">
+      <div class="topbar__brand" aria-label="System identity">
+        <div class="sigil" aria-hidden="true"></div>
+        <div class="topbar__title">
+          <div class="topbar__name">BLOODSPATTER::FORENSICS</div>
+        </div>
+      </div>
+
+      <div class="topbar__status" aria-label="System status">
+        <div class="status-pill" id="backendPill" data-state="unknown" title="Backend connectivity">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-text" id="backendText">BACKEND: UNKNOWN</span>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" class="layout" role="main">
+      <section class="panel panel--left" aria-label="Input and control panel">
+        <header class="panel__header">
+          <h1 class="panel__title">Evidence Intake</h1>
+          <p class="panel__hint">
+            Drag a stain image into the bay or select a file. Supported: JPG, PNG, WEBP.
+          </p>
+        </header>
+
+        <div class="intake">
+          <div
+            class="dropzone"
+            id="dropzone"
+            role="button"
+            tabindex="0"
+            aria-label="Upload image drop zone"
+          >
+            <input id="fileInput" class="dropzone__input" type="file" accept="image/*" />
+            <div class="dropzone__grid" aria-hidden="true"></div>
+            <div class="dropzone__content">
+              <div class="dropzone__icon" aria-hidden="true">⟟</div>
+              <div class="dropzone__headline">DROP IMAGE</div>
+              <div class="dropzone__subline">or click to select</div>
+              <div class="dropzone__meta" id="fileMeta">No file loaded.</div>
+            </div>
+          </div>
+
+          <div class="preview" aria-label="Source preview">
+            <div class="preview__header">
+              <h2 class="preview__title">Source Preview</h2>
+              <button class="btn btn--ghost" id="clearBtn" type="button" disabled>Clear</button>
+            </div>
+            <div class="preview__frame" id="previewFrame">
+              <img id="previewImg" alt="Uploaded image preview" />
+              <div class="frame-overlay frame-overlay--scanlines" aria-hidden="true"></div>
+              <div class="frame-overlay frame-overlay--noise" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <div class="controls" aria-label="Analysis controls">
+            <button class="btn btn--primary" id="analyzeBtn" type="button" disabled>
+              <span class="btn__label">Analyze</span>
+              <span class="btn__kbd" aria-hidden="true">ENTER</span>
+            </button>
+            <button class="btn btn--danger" id="abortBtn" type="button" disabled>
+              <span class="btn__label">Abort</span>
+              <span class="btn__kbd" aria-hidden="true">ESC</span>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="panel panel--right" aria-label="Results panel">
+        <div class="view view--terminal is-active" id="terminalView">
+          <header class="panel__header">
+            <h2 class="panel__title">Live Terminal</h2>
+            <p class="panel__hint">Processing pipeline logs are shown here first.</p>
+          </header>
+          <section class="terminal terminal--full" aria-label="Terminal log">
+            <header class="terminal__header">
+              <h2 class="terminal__title">Terminal</h2>
+              <div class="terminal__actions">
+                <button class="btn btn--ghost" id="copyLogBtn" type="button">Copy</button>
+                <button class="btn btn--ghost" id="clearLogBtn" type="button">Clear</button>
+              </div>
+            </header>
+            <div class="terminal__body terminal__body--full" id="terminalBody" role="log" aria-live="polite" aria-relevant="additions">
+              <div class="term-line term-line--dim">[boot] console ready. load evidence to begin.</div>
+            </div>
+          </section>
+        </div>
+
+        <div class="view view--result" id="resultView">
+          <header class="panel__header">
+            <h2 class="panel__title">Analysis Output</h2>
+            <p class="panel__hint">Processed image + computed metrics + forensic conclusion.</p>
+          </header>
+
+          <section class="stats" aria-label="Computed statistics">
+            <div class="stat">
+              <div class="stat__label">Impact Angle</div>
+              <div class="stat__value" id="angleValue">—</div>
+              <div class="stat__unit">degrees</div>
+            </div>
+            <div class="stat">
+              <div class="stat__label">Confidence</div>
+              <div class="stat__value" id="confidenceValue">—</div>
+              <div class="stat__unit">0–100%</div>
+            </div>
+            <div class="stat stat--wide">
+              <div class="stat__label">Forensic Conclusion (Technical)</div>
+              <div class="stat__value stat__value--text" id="conclusionValue">Awaiting evidence.</div>
+            </div>
+            <div class="stat stat--wide">
+              <div class="stat__label">Plain-Language Conclusion</div>
+              <div class="stat__value stat__value--text" id="plainConclusionValue">Upload and analyze an image to see a simple explanation.</div>
+            </div>
+          </section>
+
+          <section class="output" aria-label="Processed image output">
+            <div class="output__header">
+              <h3 class="output__title">Processed Frame</h3>
+              <div class="output__meta" id="outputMeta">No analysis yet.</div>
+            </div>
+            <div class="output__frame" id="outputFrame">
+              <img id="outputImg" alt="Processed analysis output" />
+              <div class="frame-overlay frame-overlay--scanlines" aria-hidden="true"></div>
+              <div class="frame-overlay frame-overlay--noise" aria-hidden="true"></div>
+              <div class="scanbar" id="scanbar" aria-hidden="true"></div>
+              <div class="output__placeholder" id="outputPlaceholder">
+                <div class="placeholder__title">NO OUTPUT</div>
+                <div class="placeholder__sub">Run analysis to render processed frame.</div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section class="alerts" aria-label="Alerts">
+          <div class="alert" id="alertBox" hidden>
+            <div class="alert__title" id="alertTitle">Error</div>
+            <div class="alert__body" id="alertBody">—</div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./script.js" defer></script>
+  </body>
+</html>
