@@ -367,9 +367,27 @@ document.addEventListener("DOMContentLoaded", () => {
       plainConclusionValue.textContent = plainConclusionFromAngle(angle);
 
       const outputUrl = `${API_BASE}/image/${encodeURIComponent(data.output_image)}?t=${Date.now()}`;
-      outputImg.src = outputUrl;
-      outputFrame.classList.add("has-image");
-      outputMeta.textContent = `output: ${sanitizeFilename(outName)}`;
+
+
+outputImg.onload = null;
+outputImg.onerror = null;
+
+
+outputImg.src = outputUrl;
+
+outputFrame.classList.add("has-image");
+outputMeta.textContent = `output: ${sanitizeFilename(outName)}`;
+
+
+outputImg.onload = () => {
+  terminalAppendLine(`[ok] output received: ${sanitizeFilename(outName)}`, "ok");
+  showResultView();
+};
+
+outputImg.onerror = () => {
+  terminalAppendLine("[warn] output image failed to load", "danger");
+  showAlert("Output fetch failed", "Image could not be loaded.");
+};
 
       
       outputImg.onload = () => {
@@ -381,7 +399,7 @@ document.addEventListener("DOMContentLoaded", () => {
         showAlert("Output fetch failed", "Backend returned a filename, but the processed image could not be loaded.");
       };
       
-      setTimeout(showResultView, 350);
+      
     } catch (err) {
       if (err?.name === "AbortError") {
         terminalAppendLine("[abort] analysis cancelled by operator.", "danger");
@@ -394,8 +412,10 @@ document.addEventListener("DOMContentLoaded", () => {
       await checkBackendReachable();
     } finally {
       outputFrame.classList.remove("is-scanning");
-      activeController = null;
-      setBusy(false);
+  activeController = null;
+
+  
+  setTimeout(() => setBusy(false), 200);
     }
   }
 

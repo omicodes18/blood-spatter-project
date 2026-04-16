@@ -9,29 +9,31 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 CORS(app)
 
-UPLOAD_FOLDER = "uploads"
-OUTPUT_FOLDER = "outputs"
+import tempfile
+
+UPLOAD_FOLDER = os.path.join(tempfile.gettempdir(), "spatter_uploads")
+OUTPUT_FOLDER = os.path.join(tempfile.gettempdir(), "spatter_outputs")
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 
 def preprocess_image(gray_image):
-    """Keep pipeline simple and similar: blur + edge extraction."""
+    
     blurred = cv2.GaussianBlur(gray_image, (5, 5), 0)
     edges = cv2.Canny(blurred, 50, 150)
     return edges
 
 
 def detect_valid_contours(edges, min_area=100.0):
-    """Find external contours and remove tiny noise blobs."""
+    
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     valid = [c for c in contours if cv2.contourArea(c) >= float(min_area)]
     return valid
 
 
 def contour_metrics(contour):
-    """Compute width/length/angle/confidence for one contour safely."""
+    
     rect = cv2.minAreaRect(contour)
     w, h = rect[1]
     width = min(w, h)
@@ -98,12 +100,12 @@ def analyze_image(image_path, min_area=100.0):
             }
         )
 
-        # Draw each droplet boundary.
+        
         box = cv2.boxPoints(rect)
         box = np.intp(box)
         cv2.drawContours(output_image, [box], 0, (0, 255, 0), 2)
 
-        # Label near the droplet center using small font to reduce clutter.
+        
         center_x, center_y = np.intp(rect[0])
         label = f"{angle:.1f} deg"
         cv2.putText(
